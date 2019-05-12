@@ -9,16 +9,12 @@ namespace Parseweather
 {
     internal class Program
     {
-       
-        private static IScheduler _schedular;
-
         private static async Task Main(string[] args)
         {
-
             Console.WriteLine("Console Start");
             var schedulerFactory = new StdSchedulerFactory();
-            _schedular = await schedulerFactory.GetScheduler();
-      
+            var schedule = await schedulerFactory.GetScheduler();
+
             var job = JobBuilder.Create<ParseWeather>()
                 .WithIdentity("ParseWeatherJob")
                 .Build();
@@ -29,13 +25,12 @@ namespace Parseweather
                 .Build();
 
             // 把工作加入排程
-            await _schedular.ScheduleJob(job, trigger);
+            await schedule.ScheduleJob(job, trigger);
 
             // 啟動排程器
-            await _schedular.Start();
+            await schedule.Start();
 
             SpinWait.SpinUntil(() => false);
-
         }
     }
 }
